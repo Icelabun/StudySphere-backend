@@ -6,13 +6,17 @@ import {
   Typography,
   Box,
   Button,
-  LinearProgress,
   Select,
   MenuItem,
   FormControl,
   InputLabel,
+  LinearProgress,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import TimerIcon from '@mui/icons-material/Timer';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import {
   LineChart,
   Line,
@@ -49,47 +53,63 @@ const GlowingText = styled(Typography)(({ theme }) => ({
   textShadow: '0 0 10px rgba(76, 170, 255, 0.5)',
 }));
 
-// Mock data - replace with real data from your backend
-const mockStudyData = {
-  dailyProgress: [
-    { day: 'Mon', hours: 2, exp: 150 },
-    { day: 'Tue', hours: 3, exp: 220 },
-    { day: 'Wed', hours: 1.5, exp: 100 },
-    { day: 'Thu', hours: 4, exp: 300 },
-    { day: 'Fri', hours: 2.5, exp: 180 },
-    { day: 'Sat', hours: 3.5, exp: 250 },
-    { day: 'Sun', hours: 2, exp: 160 },
+// Mock data
+const mockData = {
+  weeklyProgress: [
+    { day: 'Mon', hours: 2.5, exp: 150 },
+    { day: 'Tue', hours: 3, exp: 180 },
+    { day: 'Wed', hours: 1.5, exp: 90 },
+    { day: 'Thu', hours: 4, exp: 240 },
+    { day: 'Fri', hours: 2, exp: 120 },
+    { day: 'Sat', hours: 3.5, exp: 210 },
+    { day: 'Sun', hours: 2.5, exp: 150 },
+  ],
+  monthlyProgress: [
+    { week: 'Week 1', hours: 15, exp: 900 },
+    { week: 'Week 2', hours: 18, exp: 1080 },
+    { week: 'Week 3', hours: 12, exp: 720 },
+    { week: 'Week 4', hours: 20, exp: 1200 },
   ],
   subjectDistribution: [
-    { name: 'Mathematics', value: 30 },
-    { name: 'Physics', value: 25 },
-    { name: 'Chemistry', value: 20 },
-    { name: 'Biology', value: 15 },
-    { name: 'History', value: 10 },
+    { name: 'Mathematics', value: 35, time: '14h' },
+    { name: 'Physics', value: 25, time: '10h' },
+    { name: 'Chemistry', value: 20, time: '8h' },
+    { name: 'Biology', value: 15, time: '6h' },
+    { name: 'Computer Science', value: 5, time: '2h' },
   ],
   skillProgress: [
-    { skill: 'Intelligence', current: 75, target: 100 },
-    { skill: 'Focus', current: 60, target: 100 },
-    { skill: 'Memory', current: 45, target: 100 },
-    { skill: 'Comprehension', current: 80, target: 100 },
-    { skill: 'Persistence', current: 65, target: 100 },
+    { skill: 'Focus', current: 75, target: 100, improvement: '+15%' },
+    { skill: 'Consistency', current: 60, target: 100, improvement: '+10%' },
+    { skill: 'Problem Solving', current: 85, target: 100, improvement: '+20%' },
+    { skill: 'Time Management', current: 70, target: 100, improvement: '+12%' },
+  ],
+  achievements: [
+    { name: 'Study Streak: 7 Days', date: '2024-03-25', exp: 100 },
+    { name: 'Math Master', date: '2024-03-24', exp: 200 },
+    { name: 'Focus Champion', date: '2024-03-23', exp: 150 },
   ],
 };
 
-const COLORS = ['#4CAAFF', '#FF4C4C', '#52FF52', '#FFD700', '#FF00FF'];
+const COLORS = ['#4CAAFF', '#FF6B6B', '#4ECB71', '#FFA94D', '#845EF7'];
 
 const Analytics = () => {
   const { user } = useAuth();
   const [timeRange, setTimeRange] = useState('week');
+  const [selectedMetric, setSelectedMetric] = useState('hours');
+
+  const totalHours = mockData.weeklyProgress.reduce((acc, day) => acc + day.hours, 0);
+  const totalExp = mockData.weeklyProgress.reduce((acc, day) => acc + day.exp, 0);
+  const averageHoursPerDay = (totalHours / 7).toFixed(1);
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Box sx={{ mb: 4 }}>
-        <GlowingText variant="h4" gutterBottom>
+        <GlowingText variant="h4" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <AssessmentIcon sx={{ fontSize: 40 }} />
           Study Analytics
         </GlowingText>
-        <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
-          Track your progress and identify areas for improvement
+        <Typography variant="subtitle1" color="text.secondary">
+          Track your progress and optimize your study habits
         </Typography>
       </Box>
 
@@ -97,45 +117,57 @@ const Analytics = () => {
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard>
-            <Typography variant="h6" sx={{ color: '#4CAAFF' }}>
-              Total Study Time
-            </Typography>
-            <Typography variant="h4">18.5h</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <TimerIcon sx={{ color: '#4CAAFF', mr: 1 }} />
+              <Typography variant="h6" sx={{ color: '#4CAAFF' }}>
+                Total Study Time
+              </Typography>
+            </Box>
+            <Typography variant="h4">{totalHours}h</Typography>
             <Typography variant="body2" sx={{ color: 'success.main' }}>
-              +2.5h from last week
+              Avg. {averageHoursPerDay}h per day
             </Typography>
           </StatCard>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard>
-            <Typography variant="h6" sx={{ color: '#4CAAFF' }}>
-              EXP Gained
-            </Typography>
-            <Typography variant="h4">1,360</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <TrendingUpIcon sx={{ color: '#4CAAFF', mr: 1 }} />
+              <Typography variant="h6" sx={{ color: '#4CAAFF' }}>
+                EXP Gained
+              </Typography>
+            </Box>
+            <Typography variant="h4">{totalExp}</Typography>
             <Typography variant="body2" sx={{ color: 'success.main' }}>
-              +220 from last week
+              +{mockData.weeklyProgress[6].exp} today
             </Typography>
           </StatCard>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard>
-            <Typography variant="h6" sx={{ color: '#4CAAFF' }}>
-              Dungeons Cleared
-            </Typography>
-            <Typography variant="h4">12</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <EmojiEventsIcon sx={{ color: '#4CAAFF', mr: 1 }} />
+              <Typography variant="h6" sx={{ color: '#4CAAFF' }}>
+                Achievements
+              </Typography>
+            </Box>
+            <Typography variant="h4">{mockData.achievements.length}</Typography>
             <Typography variant="body2" sx={{ color: 'success.main' }}>
-              +3 from last week
+              Latest: {mockData.achievements[0].name}
             </Typography>
           </StatCard>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard>
-            <Typography variant="h6" sx={{ color: '#4CAAFF' }}>
-              Current Rank
-            </Typography>
-            <Typography variant="h4">C</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <AssessmentIcon sx={{ color: '#4CAAFF', mr: 1 }} />
+              <Typography variant="h6" sx={{ color: '#4CAAFF' }}>
+                Focus Score
+              </Typography>
+            </Box>
+            <Typography variant="h4">85%</Typography>
             <Typography variant="body2" sx={{ color: 'success.main' }}>
-              75% to Rank B
+              +5% from last week
             </Typography>
           </StatCard>
         </Grid>
@@ -143,31 +175,47 @@ const Analytics = () => {
 
       {/* Charts */}
       <Grid container spacing={3}>
-        {/* Daily Progress Chart */}
+        {/* Progress Chart */}
         <Grid item xs={12} md={8}>
           <StyledPaper>
             <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Typography variant="h6" sx={{ color: '#4CAAFF' }}>
-                Daily Progress
+                Study Progress
               </Typography>
-              <FormControl size="small" sx={{ minWidth: 120 }}>
-                <Select
-                  value={timeRange}
-                  onChange={(e) => setTimeRange(e.target.value)}
-                  sx={{ color: '#fff', bgcolor: 'rgba(76, 170, 255, 0.1)' }}
-                >
-                  <MenuItem value="week">This Week</MenuItem>
-                  <MenuItem value="month">This Month</MenuItem>
-                  <MenuItem value="year">This Year</MenuItem>
-                </Select>
-              </FormControl>
+              <Box sx={{ display: 'flex', gap: 2 }}>
+                <FormControl size="small" sx={{ minWidth: 120 }}>
+                  <Select
+                    value={timeRange}
+                    onChange={(e) => setTimeRange(e.target.value)}
+                    sx={{ color: '#fff', bgcolor: 'rgba(76, 170, 255, 0.1)' }}
+                  >
+                    <MenuItem value="week">This Week</MenuItem>
+                    <MenuItem value="month">This Month</MenuItem>
+                  </Select>
+                </FormControl>
+                <FormControl size="small" sx={{ minWidth: 120 }}>
+                  <Select
+                    value={selectedMetric}
+                    onChange={(e) => setSelectedMetric(e.target.value)}
+                    sx={{ color: '#fff', bgcolor: 'rgba(76, 170, 255, 0.1)' }}
+                  >
+                    <MenuItem value="hours">Study Hours</MenuItem>
+                    <MenuItem value="exp">EXP Gained</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
             </Box>
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={mockStudyData.dailyProgress}>
+              <LineChart
+                data={timeRange === 'week' ? mockData.weeklyProgress : mockData.monthlyProgress}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                <XAxis dataKey="day" stroke="#fff" />
-                <YAxis yAxisId="left" stroke="#4CAAFF" />
-                <YAxis yAxisId="right" orientation="right" stroke="#FF4C4C" />
+                <XAxis
+                  dataKey={timeRange === 'week' ? 'day' : 'week'}
+                  stroke="#fff"
+                />
+                <YAxis stroke="#fff" />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: '#132F4C',
@@ -176,18 +224,12 @@ const Analytics = () => {
                 />
                 <Legend />
                 <Line
-                  yAxisId="left"
                   type="monotone"
-                  dataKey="hours"
+                  dataKey={selectedMetric}
                   stroke="#4CAAFF"
-                  name="Study Hours"
-                />
-                <Line
-                  yAxisId="right"
-                  type="monotone"
-                  dataKey="exp"
-                  stroke="#FF4C4C"
-                  name="EXP Gained"
+                  strokeWidth={2}
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 6 }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -203,15 +245,15 @@ const Analytics = () => {
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={mockStudyData.subjectDistribution}
+                  data={mockData.subjectDistribution}
                   cx="50%"
                   cy="50%"
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="value"
-                  label
+                  label={({ name, value }) => `${name} (${value}%)`}
                 >
-                  {mockStudyData.subjectDistribution.map((entry, index) => (
+                  {mockData.subjectDistribution.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -220,8 +262,11 @@ const Analytics = () => {
                     backgroundColor: '#132F4C',
                     border: '1px solid rgba(76, 170, 255, 0.3)',
                   }}
+                  formatter={(value, name, props) => [
+                    `${value}% (${props.payload.time})`,
+                    name
+                  ]}
                 />
-                <Legend />
               </PieChart>
             </ResponsiveContainer>
           </StyledPaper>
@@ -234,16 +279,21 @@ const Analytics = () => {
               Skill Progress
             </Typography>
             <Grid container spacing={2}>
-              {mockStudyData.skillProgress.map((skill) => (
-                <Grid item xs={12} key={skill.skill}>
+              {mockData.skillProgress.map((skill) => (
+                <Grid item xs={12} sm={6} key={skill.skill}>
                   <Box sx={{ mb: 2 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                       <Typography variant="body1" sx={{ color: '#fff' }}>
                         {skill.skill}
                       </Typography>
-                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                        {skill.current}/{skill.target}
-                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                          {skill.current}/{skill.target}
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: 'success.main' }}>
+                          {skill.improvement}
+                        </Typography>
+                      </Box>
                     </Box>
                     <LinearProgress
                       variant="determinate"
@@ -259,6 +309,41 @@ const Analytics = () => {
                       }}
                     />
                   </Box>
+                </Grid>
+              ))}
+            </Grid>
+          </StyledPaper>
+        </Grid>
+
+        {/* Recent Achievements */}
+        <Grid item xs={12}>
+          <StyledPaper>
+            <Typography variant="h6" sx={{ color: '#4CAAFF', mb: 3 }}>
+              Recent Achievements
+            </Typography>
+            <Grid container spacing={2}>
+              {mockData.achievements.map((achievement, index) => (
+                <Grid item xs={12} sm={6} md={4} key={index}>
+                  <Paper
+                    sx={{
+                      p: 2,
+                      background: 'rgba(76, 170, 255, 0.1)',
+                      border: '1px solid rgba(76, 170, 255, 0.2)',
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <EmojiEventsIcon sx={{ color: '#FFD700', mr: 1 }} />
+                      <Typography variant="h6" sx={{ color: '#fff' }}>
+                        {achievement.name}
+                      </Typography>
+                    </Box>
+                    <Typography variant="body2" color="text.secondary">
+                      Earned on {new Date(achievement.date).toLocaleDateString()}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: '#4CAAFF' }}>
+                      +{achievement.exp} EXP
+                    </Typography>
+                  </Paper>
                 </Grid>
               ))}
             </Grid>

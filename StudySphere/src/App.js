@@ -236,7 +236,7 @@ const App = () => {
                     <PrivateRoute>
                       <>
                         <Navbar />
-                        <PlaceholderComponent title="Achievements" />
+                        <Achievements />
                       </>
                     </PrivateRoute>
                   }

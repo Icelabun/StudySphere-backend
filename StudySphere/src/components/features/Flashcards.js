@@ -62,33 +62,71 @@ const Flashcards = () => {
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
-            transition: 'transform 0.6s',
-            transformStyle: 'preserve-3d',
-            transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0)',
+            perspective: '1000px',
+            backgroundColor: 'transparent',
           }}
           onClick={handleFlip}
         >
-          <CardContent
+          <Box
             sx={{
+              position: 'relative',
               width: '100%',
               height: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backfaceVisibility: 'hidden',
+              textAlign: 'center',
+              transition: 'transform 0.6s',
+              transformStyle: 'preserve-3d',
+              transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0)',
             }}
           >
-            <Typography variant="h5" component="div" textAlign="center">
-              {isFlipped ? flashcards[currentCard].answer : flashcards[currentCard].question}
-            </Typography>
-            <Typography
-              variant="caption"
-              sx={{ position: 'absolute', bottom: 16, right: 16 }}
+            {/* Front side */}
+            <CardContent
+              sx={{
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                backfaceVisibility: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
             >
-              {`${currentCard + 1}/${flashcards.length}`}
-            </Typography>
-          </CardContent>
+              <Typography variant="h5" component="div">
+                {flashcards[currentCard].question}
+              </Typography>
+              <Typography
+                variant="caption"
+                sx={{ position: 'absolute', bottom: 16, right: 16 }}
+              >
+                {`${currentCard + 1}/${flashcards.length}`}
+              </Typography>
+            </CardContent>
+
+            {/* Back side */}
+            <CardContent
+              sx={{
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                backfaceVisibility: 'hidden',
+                transform: 'rotateY(180deg)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Typography variant="h5" component="div">
+                {flashcards[currentCard].answer}
+              </Typography>
+              <Typography
+                variant="caption"
+                sx={{ position: 'absolute', bottom: 16, right: 16 }}
+              >
+                {`${currentCard + 1}/${flashcards.length}`}
+              </Typography>
+            </CardContent>
+          </Box>
         </Card>
       </Box>
 
