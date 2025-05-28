@@ -1,13 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body {
   margin: 0;
+  min-height: 100vh;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #0a192f 0%, #132f4c 60%, #1a237e 100%);
+  color: #e3f2fd;
+  position: relative;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: -1;
+  background: radial-gradient(circle at 60% 40%, rgba(76,170,255,0.12) 0%, transparent 70%),
+              radial-gradient(circle at 20% 80%, rgba(76,170,255,0.08) 0%, transparent 80%);
+  pointer-events: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #90caf9;
+  text-shadow: 0 2px 8px rgba(76,170,255,0.15);
+}
+
+.card, .MuiPaper-root, .MuiCard-root {
+  background: rgba(19, 47, 76, 0.95) !important;
+  color: #e3f2fd !important;
+  box-shadow: 0 4px 32px 0 rgba(76,170,255,0.10);
+}
+
+.MuiTypography-root {
+  color: #e3f2fd;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  background: #132f4c;
+}
+::-webkit-scrollbar-thumb {
+  background: #4caaff;
+  border-radius: 4px;
 }

@@ -17,9 +17,9 @@ const Dashboard = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Grid container spacing={3}>
+      <Grid container spacing={3} columns={{ xs: 12, md: 12 }}>
         {/* Daily Progress */}
-        <Grid item xs={12} md={4}>
+        <Grid gridColumn={{ xs: 'span 12', md: 'span 4' }}>
           <Paper sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
               Daily Goal
@@ -40,7 +40,7 @@ const Dashboard = () => {
         </Grid>
 
         {/* Weekly Progress */}
-        <Grid item xs={12} md={4}>
+        <Grid gridColumn={{ xs: 'span 12', md: 'span 4' }}>
           <Paper sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
               Weekly Progress
@@ -61,7 +61,7 @@ const Dashboard = () => {
         </Grid>
 
         {/* Monthly Achievements */}
-        <Grid item xs={12} md={4}>
+        <Grid gridColumn={{ xs: 'span 12', md: 'span 4' }}>
           <Paper sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
               Monthly Achievements
@@ -82,7 +82,7 @@ const Dashboard = () => {
         </Grid>
 
         {/* Recent Activity */}
-        <Grid item xs={12}>
+        <Grid gridColumn={{ xs: 'span 12', md: 'span 12' }}>
           <Paper sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
               Recent Activity

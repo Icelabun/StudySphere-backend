@@ -38,11 +38,13 @@ import {
   Assignment,
   Notifications,
   ExitToApp as LogoutIcon,
+  Settings as SettingsIcon,
 } from '@mui/icons-material';
 
 import { useStats } from '../../contexts/StatsContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { styled } from '@mui/material/styles';
+import SettingsDrawer from './SettingsDrawer';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -120,23 +122,23 @@ const NavButton = styled(Button)(({ theme }) => ({
 }));
 
 const mainMenuItems = [
-  { text: 'Study Dungeon', icon: <School />, path: '/study-dungeon' },
-  { text: 'System AI', icon: <SmartToy />, path: '/ai-tutor' },
-  { text: 'Quest Analytics', icon: <Analytics />, path: '/analytics' },
+  { text: 'Tasks', icon: <School />, path: '/study-dungeon' },
+  { text: 'AI Assistant', icon: <SmartToy />, path: '/ai-tutor' },
+  { text: 'Progress', icon: <Analytics />, path: '/analytics' },
 ];
 
 const allMenuItems = [
-  { text: 'Hunter Profile', icon: <Person />, path: '/profile', category: 'Profile' },
-  { text: 'Status Window', icon: <Dashboard />, path: '/dashboard', category: 'Profile' },
-  { text: 'Study Dungeon', icon: <School />, path: '/study-dungeon', category: 'Training' },
-  { text: 'Skill Library', icon: <Book />, path: '/study-materials', category: 'Training' },
-  { text: 'Training Ground', icon: <LocalLibrary />, path: '/flashcards', category: 'Training' },
-  { text: 'Hunters Association', icon: <Forum />, path: '/forum', category: 'Community' },
-  { text: 'Shadow Exchange', icon: <Group />, path: '/social', category: 'Community' },
-  { text: 'System AI', icon: <SmartToy />, path: '/ai-tutor', category: 'System' },
-  { text: 'Quest Analytics', icon: <Analytics />, path: '/analytics', category: 'System' },
-  { text: 'Daily Quests', icon: <Assignment />, path: '/quests', category: 'Quests' },
-  { text: 'Achievement Hall', icon: <EmojiEvents />, path: '/achievements', category: 'Quests' },
+  { text: 'Profile', icon: <Person />, path: '/profile', category: 'Profile' },
+  { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard', category: 'Profile' },
+  { text: 'Tasks', icon: <School />, path: '/study-dungeon', category: 'Productivity' },
+  { text: 'Resources', icon: <Book />, path: '/study-materials', category: 'Productivity' },
+  { text: 'Flashcards', icon: <LocalLibrary />, path: '/flashcards', category: 'Productivity' },
+  { text: 'Community', icon: <Forum />, path: '/forum', category: 'Social' },
+  { text: 'Friends', icon: <Group />, path: '/social', category: 'Social' },
+  { text: 'AI Assistant', icon: <SmartToy />, path: '/ai-tutor', category: 'Tools' },
+  { text: 'Progress', icon: <Analytics />, path: '/analytics', category: 'Tools' },
+  { text: 'Goals', icon: <Assignment />, path: '/quests', category: 'Goals' },
+  { text: 'Milestones', icon: <EmojiEvents />, path: '/achievements', category: 'Goals' },
 ];
 
 const Navbar = () => {
@@ -149,6 +151,7 @@ const Navbar = () => {
   const isLaptop = useMediaQuery(theme.breakpoints.down('lg'));
   const { stats } = useStats();
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -167,6 +170,7 @@ const Navbar = () => {
       await logout();
       navigate('/auth');
     } catch (error) {
+      alert('Failed to log out. Please try again.');
       console.error('Failed to log out:', error);
     }
   };
@@ -191,7 +195,7 @@ const Navbar = () => {
             fontWeight: 'bold',
           }}
         >
-          SYSTEM
+          STUDYSPHERE
         </Typography>
       </Box>
 
@@ -220,8 +224,7 @@ const Navbar = () => {
           </Typography>
           <List>
             {items.map((item) => (
-              <StyledListItem
-                button
+              <ListItem
                 key={item.text}
                 component={RouterLink}
                 to={item.path}
@@ -237,7 +240,7 @@ const Navbar = () => {
                     },
                   }}
                 />
-              </StyledListItem>
+              </ListItem>
             ))}
           </List>
           {categoryIndex < Object.entries(allMenuItems).length - 1 && (
@@ -250,8 +253,7 @@ const Navbar = () => {
         </React.Fragment>
       ))}
       <List>
-        <StyledListItem
-          button
+        <ListItem
           onClick={handleLogout}
         >
           <ListItemIcon sx={{ color: 'rgba(255, 76, 76, 0.7)' }}>
@@ -265,7 +267,7 @@ const Navbar = () => {
               },
             }}
           />
-        </StyledListItem>
+        </ListItem>
       </List>
     </Box>
   );
@@ -315,7 +317,7 @@ const Navbar = () => {
               },
             }}
           >
-            SOLO LEVELING
+            STUDYSPHERE
           </Typography>
 
           {!isTablet && (
@@ -373,6 +375,12 @@ const Navbar = () => {
                 <Notifications />
               </IconButton>
             </StyledBadge>
+
+            <Box sx={{ flexGrow: 0, ml: 2 }}>
+              <IconButton color="primary" onClick={() => setSettingsOpen(true)}>
+                <SettingsIcon />
+              </IconButton>
+            </Box>
 
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
@@ -446,6 +454,15 @@ const Navbar = () => {
       >
         {drawer}
       </Drawer>
+
+      <SettingsDrawer
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        themeMode={theme.palette.mode}
+        toggleTheme={theme.toggleTheme}
+        user={user}
+        onProfileSave={profile => { /* Optionally handle profile save */ }}
+      />
     </AppBar>
   );
 };

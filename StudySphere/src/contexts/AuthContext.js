@@ -1,100 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import axiosInstance from '../utils/axiosInstance';
 
 const AuthContext = createContext(null);
-
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [isNewUser, setIsNewUser] = useState(false);
-
-  useEffect(() => {
-    // Check for stored auth token
-    const token = localStorage.getItem('authToken');
-    const storedUser = localStorage.getItem('user');
-    if (token && storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setLoading(false);
-  }, []);
-
-  const login = async (email, password, userType) => {
-    try {
-      // TODO: Replace with actual API call
-      const mockResponse = {
-        token: 'mock-jwt-token',
-        user: {
-          id: '1',
-          email,
-          userType,
-          username: email.split('@')[0],
-          level: 1,
-          exp: 0,
-          attributes: null, // Attributes will be set during character creation
-        },
-      };
-
-      localStorage.setItem('authToken', mockResponse.token);
-      localStorage.setItem('user', JSON.stringify(mockResponse.user));
-      setUser(mockResponse.user);
-      setIsNewUser(false);
-    } catch (error) {
-      throw new Error('Invalid credentials');
-    }
-  };
-
-  const register = async (userData) => {
-    try {
-      // TODO: Replace with actual API call
-      const mockResponse = {
-        token: 'mock-jwt-token',
-        user: {
-          id: '1',
-          ...userData,
-          level: 1,
-          exp: 0,
-          attributes: null, // Attributes will be set during character creation
-        },
-      };
-
-      localStorage.setItem('authToken', mockResponse.token);
-      localStorage.setItem('user', JSON.stringify(mockResponse.user));
-      setUser(mockResponse.user);
-      setIsNewUser(true);
-    } catch (error) {
-      throw new Error('Registration failed');
-    }
-  };
-
-  const updateUser = async (updatedUserData) => {
-    try {
-      // TODO: Replace with actual API call
-      localStorage.setItem('user', JSON.stringify(updatedUserData));
-      setUser(updatedUserData);
-      setIsNewUser(false);
-    } catch (error) {
-      throw new Error('Failed to update user data');
-    }
-  };
-
-  const logout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-    setUser(null);
-    setIsNewUser(false);
-  };
-
-  const value = {
-    user,
-    login,
-    register,
-    logout,
-    loading,
-    isNewUser,
-    updateUser,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -103,3 +10,70 @@ export const useAuth = () => {
   }
   return context;
 };
+
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isNewUser, setIsNewUser] = useState(false);
+
+  useEffect(() => {
+    // Check for existing token and user data in localStorage
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('user');
+    
+    if (token && userData) {
+      setUser(JSON.parse(userData));
+      // Set the token in axios headers
+      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    }
+    setLoading(false);
+  }, []);
+
+  const login = async (token, userData) => {
+    // Store token and user data
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(userData));
+    
+    // Set the token in axios headers
+    axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    
+    setUser(userData);
+    setIsNewUser(!userData.profileCompleted);
+  };
+
+  const logout = () => {
+    // Clear token and user data
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    
+    // Remove token from axios headers
+    delete axiosInstance.defaults.headers.common['Authorization'];
+    
+    setUser(null);
+    setIsNewUser(false);
+  };
+
+  const updateUser = (userData) => {
+    const updatedUser = { ...user, ...userData };
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    setUser(updatedUser);
+    setIsNewUser(false);
+  };
+
+  const value = {
+    user,
+    loading,
+    isNewUser,
+    login,
+    logout,
+    updateUser,
+  };
+
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
+};
+
+export default AuthContext;

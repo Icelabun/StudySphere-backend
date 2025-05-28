@@ -19,9 +19,9 @@ const Profile = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Grid container spacing={3}>
+      <Grid container spacing={3} columns={{ xs: 12, md: 12 }}>
         {/* Hunter Status */}
-        <Grid item xs={12} md={4}>
+        <Grid gridColumn={{ xs: 'span 12', md: 'span 4' }}>
           <Paper sx={{ p: 3, textAlign: 'center', background: 'linear-gradient(135deg, #1a237e 0%, #0d47a1 100%)' }}>
             <Avatar
               sx={{
@@ -65,7 +65,7 @@ const Profile = () => {
         </Grid>
 
         {/* Stats */}
-        <Grid item xs={12} md={4}>
+        <Grid gridColumn={{ xs: 'span 12', md: 'span 4' }}>
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
               Attributes
@@ -97,7 +97,7 @@ const Profile = () => {
         </Grid>
 
         {/* Skills */}
-        <Grid item xs={12} md={4}>
+        <Grid gridColumn={{ xs: 'span 12', md: 'span 4' }}>
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
               Skills
@@ -124,13 +124,13 @@ const Profile = () => {
         </Grid>
 
         {/* Achievement Stats */}
-        <Grid item xs={12}>
+        <Grid gridColumn={{ xs: 'span 12', md: 'span 12' }}>
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
               Student Achievements
             </Typography>
-            <Grid container spacing={3}>
-              <Grid item xs={6} md={3}>
+            <Grid container spacing={3} columns={{ xs: 12, md: 12 }}>
+              <Grid gridColumn={{ xs: 'span 6', md: 'span 3' }}>
                 <Box textAlign="center">
                   <Typography variant="h4" color="primary">
                     {stats.dungeonsClearedCount}
@@ -140,7 +140,7 @@ const Profile = () => {
                   </Typography>
                 </Box>
               </Grid>
-              <Grid item xs={6} md={3}>
+              <Grid gridColumn={{ xs: 'span 6', md: 'span 3' }}>
                 <Box textAlign="center">
                   <Typography variant="h4" color="primary">
                     {stats.questsCompleted}
@@ -150,7 +150,7 @@ const Profile = () => {
                   </Typography>
                 </Box>
               </Grid>
-              <Grid item xs={6} md={3}>
+              <Grid gridColumn={{ xs: 'span 6', md: 'span 3' }}>
                 <Box textAlign="center">
                   <Typography variant="h4" color="primary">
                     {stats.skills.length}
@@ -160,7 +160,7 @@ const Profile = () => {
                   </Typography>
                 </Box>
               </Grid>
-              <Grid item xs={6} md={3}>
+              <Grid gridColumn={{ xs: 'span 6', md: 'span 3' }}>
                 <Box textAlign="center">
                   <Typography variant="h4" color="primary">
                     {stats.achievements.length}

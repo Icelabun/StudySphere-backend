@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import axiosInstance from '../../utils/axiosInstance';
+
 import {
   Container,
   Paper,
@@ -73,6 +75,23 @@ const CharacterCreation = () => {
         ...prev,
         [attribute]: newValue,
       }));
+    }
+  };
+
+  const handleCharacterCreation = async () => {
+    setLoading(true);
+    setShowAnimation(true);
+    try {
+      // Send attributes to backend
+      const res = await axiosInstance.put('/api/auth/profile', { attributes });
+      // Update user context with backend response
+      updateUser(res.data.user);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      navigate('/study-dungeon');
+    } catch (error) {
+      alert('Failed to create character. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -151,15 +170,7 @@ const CharacterCreation = () => {
           </Typography>
           <Button
             variant="contained"
-            onClick={async () => {
-              setLoading(true);
-              setShowAnimation(true);
-              // Simulate loading
-              await new Promise((resolve) => setTimeout(resolve, 2000));
-              await updateUser({ ...user, attributes });
-              await new Promise((resolve) => setTimeout(resolve, 1000));
-              navigate('/study-dungeon');
-            }}
+            onClick={handleCharacterCreation}
             disabled={loading}
           >
             {loading ? 'Creating Character...' : 'Start Your Journey'}
